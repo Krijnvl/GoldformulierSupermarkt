@@ -1600,6 +1600,14 @@ const canvas = document.getElementById("signature");
 const lookupMap = new Map();
 
 async function loadSheets() {
+  const CONTACT_GIDS = [
+    "1028454158",
+    "1608034829",
+    "690258645",
+    "790443615",
+    "0"
+  ];
+
   for (const url of SHEETS) {
     try {
       const resp = await fetch(url);
@@ -1607,23 +1615,38 @@ async function loadSheets() {
       const parser = new DOMParser();
       const doc = parser.parseFromString(text, 'text/html');
       const rows = Array.from(doc.querySelectorAll('table tr'));
+
+      const isContactSheet = CONTACT_GIDS.some(gid => url.includes(`gid=${gid}`));
+
       rows.forEach(row => {
         const cells = row.querySelectorAll('td');
-        if (cells.length) {
-          const id = cells[0].textContent.trim();
-          lookupMap.set(id, {
-            adres: cells[2]?.textContent.trim() || "",
-            postcode: cells[3]?.textContent.trim() || "",
-            city: cells[4]?.textContent.trim() || "",
-            provincie: cells[11]?.textContent.trim() || ""
-          });
+        if (!cells.length) return;
+
+        const id = cells[0].textContent.trim();
+
+        const entry = {
+          companyName: cells[1]?.textContent.trim() || "",   // ✅ Filiaalnaam
+          adres: cells[2]?.textContent.trim() || "",
+          postcode: cells[3]?.textContent.trim() || "",
+          city: cells[4]?.textContent.trim() || "",
+          provincie: cells[11]?.textContent.trim() || ""
+        };
+
+        if (isContactSheet) {
+          entry.email = cells[13]?.textContent.trim() || "";
+          entry.firstName = cells[14]?.textContent.trim() || "";
+          entry.lastName = cells[15]?.textContent.trim() || "";
+          entry.phone = cells[16]?.textContent.trim() || "";
         }
+
+        lookupMap.set(id, entry);
       });
     } catch (e) {
       console.error("Fout bij laden sheet:", url, e);
     }
   }
 }
+
 
 
     function updateTotal(id, price) {
@@ -1686,24 +1709,42 @@ function updateOrderOverview() {
 
 
     
+
 async function lookupFiliaal() {
   if (!lookupMap.size) await loadSheets();
-  const id = document.getElementById('2fC3').value.trim();
 
-  if (lookupMap.has(id)) {
-    const data = lookupMap.get(id);
-    document.getElementById('address').value = data.adres;
-    document.getElementById('postcode').value = data.postcode;
-    document.getElementById('city').value = data.city;
-    document.getElementById('provincie').value = data.provincie;
+  const filiaalId = document.getElementById('2fC3').value.trim();
+
+  // Mapping: HTML input ID → veldnaam in lookupMap
+  const fieldMap = {
+    companyName: 'companyName',
+    address: 'adres',
+    postcode: 'postcode',
+    city: 'city',
+    provincie: 'provincie',
+    email: 'email',
+    gWe8: 'firstName',       // voornaam
+    ajwm: 'lastName',        // achternaam
+    phone: 'phone'
+  };
+
+  if (lookupMap.has(filiaalId)) {
+    const data = lookupMap.get(filiaalId);
+
+    // Vul de velden in
+    for (const [inputId, dataKey] of Object.entries(fieldMap)) {
+      const el = document.getElementById(inputId);
+      if (el) el.value = data[dataKey] || '';
+    }
   } else {
-    // Geen match, velden leegmaken
-    document.getElementById('address').value = '';
-    document.getElementById('postcode').value = '';
-    document.getElementById('city').value = '';
-    document.getElementById('provincie').value = '';
+    // Geen match → wis alle velden
+    for (const inputId of Object.keys(fieldMap)) {
+      const el = document.getElementById(inputId);
+      if (el) el.value = '';
+    }
   }
 }
+
 
     loadSheets();
     document.getElementById('submitBtn').addEventListener('click', submitForm);
