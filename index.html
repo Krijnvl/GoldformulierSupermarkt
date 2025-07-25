@@ -611,30 +611,50 @@ textarea.error {
     </label>
   </div>
   <div class="form-field">
-    <label>Filiaal ID: *
-      <input id="2fC3" name="filiaalId" oninput="lookupFiliaal()" required>
-    </label>
+    <label for="2fC3">Filiaal ID: *</label>
+    <input 
+      id="2fC3" 
+      name="filiaalId" 
+      oninput="lookupFiliaal()" 
+      required 
+      placeholder="Bijv. 3201" 
+      disabled 
+      style="background-color: #333; color: #888;"
+    >
+  
+    <!-- Laadstatus tekst -->
+    <div id="filiaalLoader" style="font-size: 0.85rem; color: #aaa; margin-top: 0.4rem;">
+      Laden winkeldata...
+    </div>
+  
+    <!-- Voortgangsbalk container -->
+    <div id="progressBarContainer" style="width: 100%; height: 8px; background: #2a2a2a; border-radius: 4px; overflow: hidden; margin-top: 6px;">
+      <div id="progressBar" style="width: 0%; height: 100%; background: gold; transition: width 0.3s;"></div>
+    </div>
   </div>
+  
+  
   
   <div class="form-field">
     <div class="address-block">
       <label>Postcode: *
-        <input id="postcode" name="postcode" readonly tabindex="-1">
+        <input id="postcode" name="postcode" required>
       </label>
       <label>Adres: *
-        <input id="address" name="address" readonly tabindex="-1">
+        <input id="address" name="address" required>
       </label>
       <label>Plaats: *
-        <input id="city" name="city" readonly tabindex="-1">
+        <input id="city" name="city" required>
       </label>
       <label>Provincie: *
-        <input id="provincie" name="provincie" readonly tabindex="-1">
+        <input id="provincie" name="provincie" required>
       </label>
     </div>
   </div>
+  
   <div class="address-help">
     <a href="https://wa.me/31644103175?text=Hi,%20mijn%20adres%20lijkt%20niet%20te%20kloppen.%20Kunnen%20jullie%20dit%20checken?"
-       target="_blank">Klopt dit adres niet?</a>
+       target="_blank">Kloppen de gegevens niet?</a>
   </div>
   
   <div class="form-field">
@@ -1598,8 +1618,11 @@ const canvas = document.getElementById("signature");
 ];
 
 const lookupMap = new Map();
-
 async function loadSheets() {
+  const progressBar = document.getElementById("progressBar");
+  const loaderText = document.getElementById("filiaalLoader");
+  const input = document.getElementById("2fC3");
+
   const CONTACT_GIDS = [
     "1028454158",
     "1608034829",
@@ -1607,6 +1630,8 @@ async function loadSheets() {
     "790443615",
     "0"
   ];
+  const totalSheets = SHEETS.length;
+  let loadedSheets = 0;
 
   for (const url of SHEETS) {
     try {
@@ -1623,9 +1648,8 @@ async function loadSheets() {
         if (!cells.length) return;
 
         const id = cells[0].textContent.trim();
-
         const entry = {
-          companyName: cells[1]?.textContent.trim() || "",   // ✅ Filiaalnaam
+          companyName: cells[1]?.textContent.trim() || "",
           adres: cells[2]?.textContent.trim() || "",
           postcode: cells[3]?.textContent.trim() || "",
           city: cells[4]?.textContent.trim() || "",
@@ -1641,9 +1665,25 @@ async function loadSheets() {
 
         lookupMap.set(id, entry);
       });
+
+      // ✅ Update voortgang
+      loadedSheets++;
+      const percentage = Math.round((loadedSheets / totalSheets) * 100);
+      if (progressBar) progressBar.style.width = `${percentage}%`;
+      if (loaderText) loaderText.innerText = `Laden winkeldata... (${percentage}%)`;
+
     } catch (e) {
       console.error("Fout bij laden sheet:", url, e);
     }
+  }
+
+  // ✅ Klaar met laden
+  if (loaderText) loaderText.innerText = "Data geladen. Vul ID in.";
+  if (input) {
+    input.disabled = false;
+    input.style.backgroundColor = '#1d1d1d';
+    input.style.color = '#fff';
+    setTimeout(() => input.focus(), 300);
   }
 }
 
