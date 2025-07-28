@@ -586,6 +586,113 @@ textarea.error {
 }
 
 
+  
+@media (max-width: 600px) {
+  .product-price {
+    display: none !important;
+  }
+
+  .product-item img {
+    height: auto !important;
+    max-height: 240px !important;
+    width: 100% !important;
+    object-fit: contain;
+    margin-bottom: 0.75rem;
+  }
+
+  .product-item label {
+    padding-top: 1rem;
+  }
+
+  .product-grid {
+    grid-template-columns: 1fr !important; /* 1 blik per rij op mobiel */
+  }
+}
+
+.bevestiging-tekst {
+  max-width: 700px;
+  margin: 1.5rem auto;
+  padding: 0 1.5rem;
+  font-size: 1rem;
+  line-height: 1.6;
+  text-align: justify;
+  color: #e6b400;
+}
+
+@media (max-width: 600px) {
+  .bevestiging-tekst {
+    padding: 0 1rem;
+    font-size: 0.95rem;
+  }
+}
+
+.handtekening-label {
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: #fff;
+}
+
+.handtekening-container {
+  max-width: 500px;
+  margin: 1rem auto 0;
+  text-align: center;
+}
+
+.handtekening-container canvas {
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  aspect-ratio: 2 / 1;
+  border: 2px dashed #fff;
+  background: #fff;
+  cursor: crosshair;
+  display: block;
+  margin: 0 auto;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+}
+
+.clear-link {
+  text-align: right;
+  max-width: 400px;
+  margin: 0.5rem auto 1rem;
+}
+
+.clear-link a {
+  color: #aaa;
+  font-size: 0.85rem;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+
+.clear-link a:hover {
+  color: #fff;
+}
+
+.button-wrapper {
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
+.button-wrapper button {
+  padding: 0.75rem 1.5rem;
+  background: #c1b270;
+  color: #000;
+  font-weight: 600;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.button-wrapper button:hover {
+  background: #b0a15c;
+}
+
+
+
 </style>
 </head>
 <body>
@@ -1154,30 +1261,31 @@ textarea.error {
   <h3>Overzicht</h3>
   <div class="order-confirmation"></div>
   <div id="summary"></div>
-  <p class="warning" style="margin-left: 6rem; margin-right: 6rem;">
+  <p class="warning bevestiging-tekst">
     Ik bevestig dat ik volledig op de hoogte ben van de aard van de bestelde producten en ga akkoord met de bijbehorende voorwaarden, inclusief prijzen, leveringsdata en eventuele andere relevante informatie. Deze verklaring is rechtsgeldig en dient als formele bevestiging van mijn intentie om de bovengenoemde producten van het merk Gold Dry aan te schaffen.
   </p>
-  
-  <p style="margin-left: 6rem; margin-bottom: 0.5rem;">Handtekening:</p>
 
-  <canvas
-    id="signature"
-    width="400"
-    height="200"
-    style="display: block; margin: 0 auto 0 6rem; border: 2px dashed #fff; background: #fff; cursor: crosshair;"
-  ></canvas>
   
-  <div class="address-help" style="margin-left: 11.9rem; width: 400px; text-align: right;">
-    <a href="#" onclick="clearCanvas(); return false;">Handtekening wissen</a>
+  <p class="handtekening-label">Handtekening:</p>
+
+
+  <div class="handtekening-container">
+    <canvas id="signature" width="400" height="200"></canvas>
+    <div class="clear-link">
+      <a href="#" onclick="clearCanvas(); return false;">Handtekening wissen</a>
+    </div>
   </div>
+  
  
   
   
   <input type="hidden" id="signatureData" name="signatureData">
-  <br>
- <button type="button" id="submitBtn" style="margin-left: 6rem; margin-top: 1rem;">Verstuur</button>
-  
 
+<div class="button-wrapper">
+  <button type="button" id="submitBtn">Verstuur</button>
+</div>
+
+  
 <!-- ✅ Succes-popup -->
 <div id="successPopup" class="popup hidden">
   <div class="popup-box success">
