@@ -747,6 +747,16 @@ textarea.error {
       <button type="button" onclick="setToggle('m89Y','Ja',this)">Nee</button>
     </div>
   </div>
+
+  <div class="form-field">
+    <label>Persoonlijke uitlevering door Binc?</label>
+    <div class="btn-group">
+      <input type="hidden" id="tZd9" name="zelfUitleveren" value="" class="required-toggle">
+      <button type="button" onclick="setToggle('tZd9','Ja',this)">Ja</button>
+      <button type="button" onclick="setToggle('tZd9','Nee',this)">Nee</button>
+    </div>
+  </div>
+  
   <div class="form-field">
     <button type="button" onclick="nextStep()">Next</button>
   </div>
@@ -1514,6 +1524,9 @@ function toggleItem(checkbox) {
 
   const responses = [];
   const multiplyByTwo = ['op9u', 'kg3w', '79Ki', 'qA18', 'ecl1', '2yGP', 'woFY', 'a4mQ', 'ecl2'];
+
+// Voeg vaste waarde toe voor kkX1
+responses.push({ id: "kkX1", value: "Supermarkt" })
 
   for (const [domId, widgetId] of Object.entries(FIELD_MAP)) {
     const el = document.getElementById(domId);
