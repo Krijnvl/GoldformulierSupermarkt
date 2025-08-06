@@ -1325,12 +1325,12 @@ textarea.error {
   }
 
   function resetIfEmpty(el) {
-    if (el.value === "" || el.value === "0") {
-      el.value = "0";
-    } else {
-      el.value = String(Number(el.value)); // verwijdert voorloopnullen
-    }
-  }
+    if (el.value === "") {
+    el.value = "";
+  } else {
+    el.value = String(Number(el.value));
+}
+
 
   function filterToNumbers(el) {
     el.value = el.value.replace(/[^0-9]/g, ''); // haal niet-nummers weg
@@ -1551,7 +1551,7 @@ function toggleItem(checkbox) {
   } else {
     el.style.display = 'none';
     if (input) {
-      input.value = "0";
+    input.value = "";
       input.dispatchEvent(new Event('input')); // zorgt dat totalen en overzicht updaten
     }
   }
@@ -1646,7 +1646,8 @@ responses.push({ id: "kkX1", value: "Supermarkt" })
 
     if (multiplyByTwo.includes(domId)) {
       const numberVal = parseInt(el.value, 10);
-      value = isNaN(numberVal) ? 0 : numberVal * 2;
+     value = isNaN(numberVal) ? "" : numberVal * 2;
+
     }
 
     responses.push({ id: widgetId, value: value.toString() });
